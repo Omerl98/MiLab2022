@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="72dp"
-        android:background="@color/black"
+        android:background="#0A40AA"
         android:text="Stark"
         app:layout_constraintBottom_toTopOf="@+id/lannister_button"
         app:layout_constraintEnd_toEndOf="@+id/lannister_button"
