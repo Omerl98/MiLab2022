@@ -4,44 +4,57 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MainActivity extends AppCompatActivity {
+    private Button notifyBtn;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
-    Button notifyBtn;
+    private void createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("notificationChannel", "notificationChannel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService((NotificationManager.class));
+            manager.createNotificationChannel((channel));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        createNotificationChannel();
 
         notifyBtn = findViewById(R.id.notify_btn);
-        NotificationChannel channel;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService((NotificationManager.class));
-            manager.createNotificationChannel((channel));
-        }
-
-
         notifyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"My Notification");
-                builder.setContentTitle("My Title");
-                builder.setContentText("Hello!");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
-                builder.setAutoCancel(true);
-
-                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
-                managerCompat.notify(1, builder.build());
+                setAlarm();
 
 
             }
         });
     }
+
+    private void setAlarm() {
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this,AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(this,0,intent,0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5 * 60 * 1000 ,pendingIntent);
+        Toast.makeText(this,"Activated", Toast.LENGTH_SHORT).show();
+    }
+
+
 }
