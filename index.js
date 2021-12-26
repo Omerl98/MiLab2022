@@ -39,7 +39,7 @@ app.get('/tasks/add', (req, res) => {
                 res.send(err);
                 
             } else {
-                res.send(` ${taskToDelete} was deleted successfully`);
+                res.send(`task was deleted successfully`);
             }
         })
     }
